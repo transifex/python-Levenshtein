@@ -2369,6 +2369,7 @@ lev_u_edit_distance(size_t len1, const lev_wchar *string1,
 
   size_t len_diff = len1 > len2 ? len1 - len2 : len2 - len1;
   size_t len_sum = len1 + len2;
+  size_t max_edit = 0.4 * len_sum;
   if (len_diff > 0.4 * len_sum)
       return len_sum;
 
@@ -2391,6 +2392,7 @@ lev_u_edit_distance(size_t len1, const lev_wchar *string1,
     return len2;
   if (len2 == 0)
     return len1;
+
 
   /* make the inner cycle (i.e. string2) the longer one */
   if (len1 > len2) {
@@ -2428,6 +2430,7 @@ lev_u_edit_distance(size_t len1, const lev_wchar *string1,
    * fast.  */
   if (xcost) {
     for (i = 1; i < len1; i++) {
+      size_t i2 = 1;
       size_t *p = row + 1;
       const lev_wchar char1 = string1[i - 1];
       const lev_wchar *char2p = string2;
@@ -2442,6 +2445,11 @@ lev_u_edit_distance(size_t len1, const lev_wchar *string1,
         if (x > D + 1)
           x = D + 1;
         *(p++) = x;
+        if (i == (i2 - len_diff) && x > max_edit) {
+            free(row);
+            return len_sum;
+        }
+        i2++;
       }
     }
   }
@@ -4124,7 +4132,7 @@ lev_quick_median(size_t n,
   double *symset;
   double ml, wl;
 
-  /* first check whether the result would be an empty string 
+  /* first check whether the result would be an empty string
    * and compute resulting string length */
   ml = wl = 0.0;
   for (i = 0; i < n; i++) {
@@ -4317,7 +4325,7 @@ lev_u_quick_median(size_t n,
   HQItem *symmap;
   double ml, wl;
 
-  /* first check whether the result would be an empty string 
+  /* first check whether the result would be an empty string
    * and compute resulting string length */
   ml = wl = 0.0;
   for (i = 0; i < n; i++) {
