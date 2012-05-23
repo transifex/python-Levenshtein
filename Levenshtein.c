@@ -2344,6 +2344,11 @@ lev_u_edit_distance(size_t len1, const lev_wchar *string1,
   size_t *end;
   size_t half;
 
+  size_t len_diff = len1 > len2 ? len1 - len2 : len2 - len1;
+  size_t len_sum = len1 + len2;
+  if (len_diff > 0.4 * len_sum)
+      return len_sum;
+
   /* strip common prefix */
   while (len1 > 0 && len2 > 0 && *string1 == *string2) {
     len1--;
