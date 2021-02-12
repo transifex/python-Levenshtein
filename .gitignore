@@ -25,10 +25,11 @@ dist
 *~
 *.bak
 .coverage
-*.pyd 
+*.pyd
 *.so
 *.orig
 *.rej
 __minitage__*
 src
 MANIFEST
+.vscode/
